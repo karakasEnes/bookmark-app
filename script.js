@@ -6,7 +6,7 @@ const websiteNameEl = document.getElementById('website-name');
 const websiteUrlEl = document.getElementById('website-url');
 const bookmarksContainer = document.getElementById('bookmarks-container');
 
-
+let bookmarks = [];
 
 // Show Modal, Focus on Input
 function showModal() {
@@ -39,6 +39,25 @@ function validate(nameValue, urlValue) {
   }
 
 
+function fetchLocalStorage() {
+  // get bookmarks if it's exists
+  if (localStorage.getItem("bookmarks"))  {
+    bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+  } else {
+    // crete bookmarks array
+    bookmarks = [
+      {
+        name: "enes",
+        url: "enes.com"
+      }
+    ];
+
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+
+  }
+}
+
+
 function storeBookmark(e) {
     e.preventDefault();
     const nameValue = websiteNameEl.value;
@@ -49,9 +68,26 @@ function storeBookmark(e) {
     }
 
     if (!validate(nameValue, urlValue)) {
+        console.log("return false happened")
         return false;
     }
+    const bookmark = {
+      name:nameValue,
+      url:urlValue
+    };
+
+    bookmarks.push(bookmark);
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    fetchLocalStorage();
+    bookmarkForm.reset(); // reseting our form inputs means cleaning
+    websiteNameEl.focus();
+
 }
 
 
 bookmarkForm.addEventListener("submit", storeBookmark)
+
+
+
+//onload application 
+fetchLocalStorage();
